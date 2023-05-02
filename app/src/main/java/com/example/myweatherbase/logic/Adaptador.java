@@ -34,32 +34,28 @@ public class Adaptador extends RecyclerView.Adapter<Adaptador.ViewHolder> {
         View view = inflater.inflate(R.layout.simple_element, parent, false);
         return new ViewHolder(view);
     }
-
+//sys - dt_txt
     @Override
     public void onBindViewHolder(@NonNull Adaptador.ViewHolder holder, int position) {
-        Date date = new Date((long) root.list.get(0).dt * 1000);
+        ImageDownloader.downloadImage(Parameters.ICON_URL_PRE + root.list.get(position).weather.get(0).icon + Parameters.ICON_URL_POST, holder.imageView);
+        holder.textViewTemp.setText("Temp " + root.list.get(position).main.temp + "º ");
+        holder.textViewMaxTemp.setText("Max " + root.list.get(position).main.temp_max + " ");
+        holder.textViewMinTemp.setText("Min " + root.list.get(position).main.temp_min + " ");
+        holder.textViewCielo.setText(root.list.get(position).weather.get(0).description);
+
+
+        //  Date date = new Date((long) root.list.get(position).dt * 1000);
         SimpleDateFormat dateDayOfWeek = new SimpleDateFormat("E");
         SimpleDateFormat dateWeek = new SimpleDateFormat("d MMM yyyy");
 
         SimpleDateFormat dateDay = new SimpleDateFormat("EEE, d MMM yyyy");
         SimpleDateFormat dateHour = new SimpleDateFormat("HH:mm");
 
-        for (int i = 0; i < root.list.size(); i++) {
-            holder.textViewTemp.setText("Temp " + root.list.get(i).main.temp + "º ");
+        holder.textViewFecha.setText(dateWeek.format((long)root.list.get(position).dt*1000));
+        holder.textViewHora.setText(dateHour.format((long)root.list.get(position).dt*1000) );
+        holder.txtViewDia.setText(dateDayOfWeek.format((long)root.list.get(position).dt*1000));
 
-            holder.textViewMaxTemp.setText("Max " + root.list.get(i).main.temp_max + " ");
-            holder.textViewMinTemp.setText("Min " + root.list.get(i).main.temp_min + " ");
 
-        }
-
-        holder.txtViewDia.setText(dateDayOfWeek.format(date));
-        holder.textViewCielo.setText(root.list.get(0).weather.get(0).description);
-       // holder.textViewTemp.setText("Temp " + root.list.get(2).main.temp + "º ");
-        holder.textViewFecha.setText(dateWeek.format(date));
-    //    holder.textViewMaxTemp.setText("Max " + root.list.get(0).main.temp_max + " ");
-        holder.textViewHora.setText(dateHour.format(date));
-  //      holder.textViewMinTemp.setText("Min " + root.list.get(0).main.temp_min + " ");
-        ImageDownloader.downloadImage(Parameters.ICON_URL_PRE + root.list.get(0).weather.get(0).icon + Parameters.ICON_URL_POST, holder.imageView);
 
 
     }

@@ -38,7 +38,7 @@ public class MainActivity extends BaseActivity implements CallInterface {
     // Realizamos la llamada y recogemos los datos en un objeto Root
     @Override
     public void doInBackground() {
-        root = Connector.getConector().get(Root.class,"&lat=59.5862518&lon=-0.5411163");
+        root = Connector.getConector().get(Root.class,"&lat=-0.3773900&lon=39.4697500");
         //root.list.get(0).wind;
     }
 
