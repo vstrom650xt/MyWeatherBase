@@ -1,8 +1,9 @@
 package com.example.myweatherbase.activities.model;
 
+import java.io.Serializable;
 import java.nio.file.Path;
 
-public class Ciudad {
+public class Ciudad implements Serializable {
     private String name;
     private String path;
     private int img;
