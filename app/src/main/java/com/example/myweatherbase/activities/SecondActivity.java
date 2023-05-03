@@ -109,3 +109,30 @@ public class SecondActivity extends AppCompatActivity {
 
 
 }
+
+
+/*
+// Importar las siguientes clases
+import android.Manifest;
+        import android.content.Context;
+        import android.content.pm.PackageManager;
+        import android.location.Location;
+        import android.location.LocationManager;
+        import androidx.core.app.ActivityCompat;
+
+// Obtener una instancia del LocationManager
+        LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+
+// Verificar si se tienen los permisos necesarios
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+
+        // Obtener la última ubicación conocida
+        Location lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+
+        if (lastKnownLocation != null) {
+        // Obtener la latitud y longitud
+        double latitude = lastKnownLocation.getLatitude();
+        double longitude = lastKnownLocation.getLongitude();
+        }
+        }
+*/
