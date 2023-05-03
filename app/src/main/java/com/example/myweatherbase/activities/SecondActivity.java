@@ -2,8 +2,14 @@ package com.example.myweatherbase.activities;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.location.Address;
+import android.location.Geocoder;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
@@ -15,8 +21,10 @@ import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import com.example.myweatherbase.R;
 import com.example.myweatherbase.activities.model.Ciudad;
@@ -25,8 +33,13 @@ import com.example.myweatherbase.activities.model.Root;
 import com.example.myweatherbase.logic.Adaptador;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnSuccessListener;
 
-public class SecondActivity extends AppCompatActivity {
+import java.io.IOException;
+import java.util.List;
+import java.util.Locale;
+
+public class SecondActivity extends AppCompatActivity implements LocationListener {
     private Spinner spinnerciudad;
     private Button btnciudad;
     private ImageView imagenciudad;
@@ -34,8 +47,11 @@ public class SecondActivity extends AppCompatActivity {
     private Adaptador adaptador;
     private Ciudad ciudad;
     private FusedLocationProviderClient fusedLocationClient;
-    private  Double latitude;
-    private  Double longitude;
+    private Double latitude;
+    private Double longitude;
+    private static final int REQUEST_LOCATION_PERMISSION = 1;
+    private LocationManager locationManager;
+    private LocationListener locationListener;
 
     public void onCreate(Bundle savedInstance) {
         super.onCreate(savedInstance);
@@ -45,13 +61,23 @@ public class SecondActivity extends AppCompatActivity {
         spinnerciudad = findViewById(R.id.spinnerCiudades);
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
+        // Solicitar permiso de ubicación
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                    REQUEST_LOCATION_PERMISSION);
+        } else {
+            // El permiso ya ha sido otorgado
+            obtenerUbicacionActual();
+        }
+
 
 
         ActivityResultLauncher<Intent> activityResultLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
 
         });
-
-
 
 
         ArrayAdapter<Ciudad> adapter = new ArrayAdapter<>(this,
@@ -79,10 +105,51 @@ public class SecondActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Intent i = new Intent(getApplicationContext(), MainActivity.class);
                 i.putExtra("coord", ciudad);
-                activityResultLauncher.launch(i);}
+                activityResultLauncher.launch(i);
+            }
         });
 
 
+    }
+
+
+    @Override
+    public void onLocationChanged(@NonNull Location location) {
+
+    }
+
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == REQUEST_LOCATION_PERMISSION) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // Permiso otorgado
+                obtenerUbicacionActual();
+            } else {
+                // Permiso denegado
+                Toast.makeText(this, "Permiso de ubicación denegado", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+
+    private void obtenerUbicacionActual() {
+        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        locationListener = new LocationListener() {
+            @Override
+            public void onLocationChanged(@NonNull Location location) {
+                latitude = location.getLatitude();
+               longitude = location.getLongitude();
+
+                RepositorioCiudad.getInstance().getAll().get(3).setPath("&lat="+latitude+"lon="+longitude);
+                System.out.println(RepositorioCiudad.getInstance().getAll().get(3).getPath());
+                // Detener la escucha de actualizaciones de ubicación después de obtener la primera ubicación
+                locationManager.removeUpdates(locationListener);
+            }
+        };
+
+        // Solicitar actualizaciones de ubicación
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
             //    ActivityCompat#requestPermissions
@@ -93,46 +160,9 @@ public class SecondActivity extends AppCompatActivity {
             // for ActivityCompat#requestPermissions for more details.
             return;
         }
-        fusedLocationClient.getLastLocation()
-                .addOnSuccessListener(location -> {
-                    if (location != null) {
-                        latitude = location.getLatitude();
-                        longitude = location.getLongitude();
-                        System.out.println("wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwdsadasdasdasdasasd"+latitude + "" + longitude);
-                        //rellenar aqui con el set
-                        RepositorioCiudad.getInstance().getAll().get(3).setPath("&lat="+latitude+"lon="+longitude);
-
-                    }
-                });
-
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
     }
-
 
 }
 
 
-/*
-// Importar las siguientes clases
-import android.Manifest;
-        import android.content.Context;
-        import android.content.pm.PackageManager;
-        import android.location.Location;
-        import android.location.LocationManager;
-        import androidx.core.app.ActivityCompat;
-
-// Obtener una instancia del LocationManager
-        LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-
-// Verificar si se tienen los permisos necesarios
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-
-        // Obtener la última ubicación conocida
-        Location lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-
-        if (lastKnownLocation != null) {
-        // Obtener la latitud y longitud
-        double latitude = lastKnownLocation.getLatitude();
-        double longitude = lastKnownLocation.getLongitude();
-        }
-        }
-*/
