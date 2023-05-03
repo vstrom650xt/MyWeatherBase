@@ -103,6 +103,8 @@ public class SecondActivity extends AppCompatActivity implements LocationListene
         btnciudad.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                RepositorioCiudad.getInstance().getAll().get(3).setPath("&lat="+latitude.toString()+"&lon="+longitude.toString());
+                RepositorioCiudad.getInstance().getAll().get(3).getPath();
                 Intent i = new Intent(getApplicationContext(), MainActivity.class);
                 i.putExtra("coord", ciudad);
                 activityResultLauncher.launch(i);
@@ -142,8 +144,6 @@ public class SecondActivity extends AppCompatActivity implements LocationListene
                 latitude = location.getLatitude();
                longitude = location.getLongitude();
 
-                RepositorioCiudad.getInstance().getAll().get(3).setPath("&lat="+latitude+"lon="+longitude);
-                System.out.println(RepositorioCiudad.getInstance().getAll().get(3).getPath());
                 // Detener la escucha de actualizaciones de ubicación después de obtener la primera ubicación
                 locationManager.removeUpdates(locationListener);
             }
