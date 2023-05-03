@@ -10,6 +10,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.myweatherbase.API.Connector;
 import com.example.myweatherbase.R;
+import com.example.myweatherbase.activities.model.Ciudad;
+import com.example.myweatherbase.activities.model.RepositorioCiudad;
 import com.example.myweatherbase.activities.model.Root;
 import com.example.myweatherbase.base.BaseActivity;
 import com.example.myweatherbase.base.CallInterface;
@@ -26,19 +28,32 @@ public class MainActivity extends BaseActivity implements CallInterface {
     private Root root;
     private RecyclerView recyclerView;
     private TextView textCiudad;
+    private RepositorioCiudad repositorioCiudad ;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        recyclerView = findViewById(R.id.recycler);
+        textCiudad = findViewById(R.id.textoCiudad);
         // Mostramos la barra de progreso y ejecutamos la llamada a la API
         showProgress();
         executeCall(this);
+
+
+
     }
 
     // Realizamos la llamada y recogemos los datos en un objeto Root
     @Override
     public void doInBackground() {
-        root = Connector.getConector().get(Root.class,"&lat=-0.3773900&lon=39.4697500");
+        Bundle bundle = getIntent().getExtras();
+        Ciudad ciudad = (Ciudad)  bundle.get("coord");
+        textCiudad.setText(ciudad.getName());
+
+
+        root = Connector.getConector().get(Root.class, ciudad.getPath());
         //root.list.get(0).wind;
     }
 
@@ -46,17 +61,10 @@ public class MainActivity extends BaseActivity implements CallInterface {
     @Override
     public void doInUI() {
         hideProgress();
-
-        //recycleview con  linear layout manager
-        recyclerView = findViewById(R.id.recycler);
-        textCiudad = findViewById(R.id.textoCiudad);
-
-        textCiudad.setText(root.city.name);
-
         Adaptador adaptador = new Adaptador(this,root);
         recyclerView.setAdapter(adaptador);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-
-
     }
+
+
 }
