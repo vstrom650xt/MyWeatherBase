@@ -25,13 +25,15 @@ public class CallMethods<T>  {
     public String get(String url){
         Call<ResponseBody> call = service.getCall(url);
         try {
-            return call.execute().body().string();
+            ResponseBody responseBody = call.execute().body();
+            if(responseBody != null) {
+                return responseBody.string();
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
         return null;
     }
-
     public String post(String url, RequestBody data){
         Call<ResponseBody> call = service.postCall(url, data);
         try {

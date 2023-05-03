@@ -27,6 +27,10 @@ public class Ciudad implements Serializable {
         return img;
     }
 
+    public void setPath(String path) {
+        this.path = path;
+    }
+
     @Override
     public String toString() {
         return name + "";

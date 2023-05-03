@@ -22,6 +22,8 @@ public class RepositorioCiudad {
         ciudades.add(new Ciudad("VLC","&lat=-0.3773900&lon=39.4697500", R.mipmap.vlc_foreground));
         ciudades.add(new Ciudad("BCN","&lat=41.38879&lon=2.15899",R.mipmap.ic_launcherbcn));
         ciudades.add(new Ciudad("MDD","&lat=41.38879&lon=2.15899",R.mipmap.ic_launchermdd_foreground));
+        ciudades.add(new Ciudad("Current location","",R.mipmap.ic_launchergps_foreground));
+
 
         return ciudades;
     }
@@ -35,6 +37,7 @@ public class RepositorioCiudad {
         return  new ArrayList<>(ciudades);
 
     }
+
     @Override
     public String toString() {
         return ciudades+"";
