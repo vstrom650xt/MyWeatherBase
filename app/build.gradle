@@ -38,7 +38,7 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
     // Libreria para la manipulacion de json
-    implementation 'com.google.code.gson:gson:2.8.8'
+    implementation 'com.google.code.gson:gson:2.10.1'
     // Libreria para las llamadas a la API
     implementation 'com.squareup.retrofit2:retrofit:2.9.0'
     // Libreria para el manejo de imagenes

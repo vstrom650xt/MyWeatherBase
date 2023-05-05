@@ -34,7 +34,9 @@ import com.example.myweatherbase.logic.Adaptador;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
@@ -43,8 +45,7 @@ public class SecondActivity extends AppCompatActivity implements LocationListene
     private Spinner spinnerciudad;
     private Button btnciudad;
     private ImageView imagenciudad;
-    private Root root;
-    private Adaptador adaptador;
+
     private Ciudad ciudad;
     private FusedLocationProviderClient fusedLocationClient;
     private Double latitude;
@@ -53,6 +54,8 @@ public class SecondActivity extends AppCompatActivity implements LocationListene
     private LocationManager locationManager;
     private LocationListener locationListener;
 
+    private FloatingActionButton floatingActionButton;
+
     public void onCreate(Bundle savedInstance) {
         super.onCreate(savedInstance);
         setContentView(R.layout.activity_second);
@@ -60,8 +63,21 @@ public class SecondActivity extends AppCompatActivity implements LocationListene
         imagenciudad = findViewById(R.id.imageViewCiudad);
         spinnerciudad = findViewById(R.id.spinnerCiudades);
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+        floatingActionButton = findViewById(R.id.floatingBtn);
+        //deleteCache(this);
 
-        // Solicitar permiso de ubicación
+
+        floatingActionButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(getApplicationContext(), ThirdActivity.class);
+                startActivity(i);
+
+
+            }
+        });
+
+        // Solicita permiso de ubicación
         if (ContextCompat.checkSelfPermission(this,
                 Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
@@ -72,7 +88,6 @@ public class SecondActivity extends AppCompatActivity implements LocationListene
             // El permiso ya ha sido otorgado
             obtenerUbicacionActual();
         }
-
 
 
         ActivityResultLauncher<Intent> activityResultLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
@@ -103,7 +118,7 @@ public class SecondActivity extends AppCompatActivity implements LocationListene
         btnciudad.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                RepositorioCiudad.getInstance().getAll().get(3).setPath("&lat="+latitude.toString()+"&lon="+longitude.toString());
+                RepositorioCiudad.getInstance().getAll().get(3).setPath("&lat=" + latitude.toString() + "&lon=" + longitude.toString());
                 RepositorioCiudad.getInstance().getAll().get(3).getPath();
                 Intent i = new Intent(getApplicationContext(), MainActivity.class);
                 i.putExtra("coord", ciudad);
@@ -138,15 +153,12 @@ public class SecondActivity extends AppCompatActivity implements LocationListene
 
     private void obtenerUbicacionActual() {
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        locationListener = new LocationListener() {
-            @Override
-            public void onLocationChanged(@NonNull Location location) {
-                latitude = location.getLatitude();
-               longitude = location.getLongitude();
+        locationListener = location -> {
+            latitude = location.getLatitude();
+            longitude = location.getLongitude();
 
-                // Detener la escucha de actualizaciones de ubicación después de obtener la primera ubicación
-                locationManager.removeUpdates(locationListener);
-            }
+            // Detener la escucha de actualizaciones de ubicación después de obtener la primera ubicación
+            locationManager.removeUpdates(locationListener);
         };
 
         // Solicitar actualizaciones de ubicación
@@ -162,7 +174,6 @@ public class SecondActivity extends AppCompatActivity implements LocationListene
         }
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
     }
-
 }
 
 

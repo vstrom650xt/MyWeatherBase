@@ -17,6 +17,12 @@
         android:theme="@style/Theme.MyWeatherBase"
         tools:targetApi="31"
         android:usesCleartextTraffic="true">
+
+        <activity
+            android:name=".activities.ThirdActivity"
+            android:exported="true">
+
+        </activity>
         <activity
             android:name=".activities.SecondActivity"
             android:exported="true">
